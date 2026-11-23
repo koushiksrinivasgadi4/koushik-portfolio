@@ -214,12 +214,6 @@ export default function App() {
       <Header />
 
       <main>
-        <Welcome name = "Koushik Srinivas"/>
-        <Counter />
-        <Login />
-        <EventDemo />
-        <FormDemo />
-        <SkillsDemo />
         <Hero />
         <About />
         <Skills />

@@ -55,22 +55,43 @@ function Hero() {
           <span className="social-location"><MapPin size={14} /> {profile.location}</span>
         </motion.div>
       </motion.div>
-      <motion.div className="hero-visual" initial={{ opacity: 0, scale: .88, rotate: -4 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: .9, delay: .25 }}>
-        <div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit orbit-three" />
+      
+      <motion.div
+        className="hero-visual"
+        initial={{ opacity: 0, scale: .88, rotate: -4 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        transition={{ duration: .9, delay: .25 }}
+      >
+        <div className="orbit orbit-one" />
+        <div className="orbit orbit-two" />
+        <div className="orbit orbit-three" />
         <div className="visual-glow" />
-        <div className="core-card">
-          <div className="core-top"><span>DEV_PROFILE.exe</span><span className="core-dots">● ● ●</span></div>
-          <div className="core-icon"><BrainCircuit size={62} strokeWidth={1.15} /></div>
-          <div className="core-name">{profile.initials}<span>_</span></div>
-          <div className="core-caption">JAVA <b>+</b> INTELLIGENCE</div>
-          <div className="core-progress"><span /></div>
-          <div className="core-foot"><span>BUILDING</span><span>v.2026</span></div>
+
+        <div className="profile-photo-frame">
+          <img
+            src="/profile.png"
+            alt="Koushik Srinivas - Java Backend Developer"
+            className="profile-photo"
+          />
         </div>
-        <div className="float-chip chip-java"><Code2 size={15} /> Java</div>
-        <div className="float-chip chip-ai"><Sparkles size={15} /> AI / LLM</div>
-        <div className="float-chip chip-api"><Terminal size={15} /> REST APIs</div>
-        <div className="visual-label">SYSTEM ONLINE <span>✳</span></div>
+
+        <div className="float-chip chip-java">
+          <Code2 size={15} /> Java
+        </div>
+
+        <div className="float-chip chip-ai">
+          <Sparkles size={15} /> AI / LLM
+        </div>
+
+        <div className="float-chip chip-api">
+          <Terminal size={15} /> REST APIs
+        </div>
+
+        <div className="visual-label">
+          JAVA DEVELOPER <span>✳</span>
+        </div>
       </motion.div>
+
     </div>
     <a className="scroll-cue" href="#about"><span /> SCROLL TO EXPLORE</a>
   </section>;
@@ -149,56 +170,225 @@ function AISection() {
   </section>;
 }
 
+
+
 function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [state, setState] = useState({ loading: false, type: '', message: '' });
-  const update = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [state, setState] = useState({
+    loading: false,
+    type: '',
+    message: ''
+  });
+
+  const update = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
   async function submit(e) {
     e.preventDefault();
-    setState({ loading: true, type: '', message: '' });
+
+    setState({
+      loading: true,
+      type: '',
+      message: ''
+    });
+
     try {
-      const base = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-      const response = await fetch(`${base}/api/contact`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form)
+      const response = await fetch('https://formspree.io/f/moedppqy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify(form)
       });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.message || 'Could not send your message. Please try again.');
-      setState({ loading: false, type: 'success', message: 'Message received. Thank you for reaching out!' });
-      setForm({ name: '', email: '', subject: '', message: '' });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.errors?.map(error => error.message).join(', ') ||
+          'Could not send your message. Please try again.'
+        );
+      }
+
+      setState({
+        loading: false,
+        type: 'success',
+        message: 'Message sent successfully! Thank you for reaching out.'
+      });
+
+      setForm({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+
     } catch (error) {
-      setState({ loading: false, type: 'error', message: error.message || 'Backend unavailable. Please email me directly.' });
+      setState({
+        loading: false,
+        type: 'error',
+        message: error.message || 'Unable to send your message. Please try again.'
+      });
     }
   }
-  return <section id="contact" className="section-wrap section-block contact-section">
-    <SectionHeading eyebrow="05 / GET IN TOUCH" title={<>Have an idea?<br /><span className="gradient-text">Let's talk.</span></>} text="Open to conversations about Java development, backend engineering and AI-powered applications." />
-    <div className="contact-grid">
-      <div className="contact-info">
-        <h3>Let's build something<br />meaningful.</h3><p>Have an opportunity, collaboration idea or just want to connect? Send a message.</p>
-        <a className="contact-detail" href={`mailto:${profile.email}`}><span><Mail size={18} /></span><div><small>EMAIL ME</small><b>{profile.email}</b></div><ArrowUpRight size={16} /></a>
-        <a className="contact-detail" href={profile.linkedin} target="_blank" rel="noreferrer"><span><Linkedin size={18} /></span><div><small>CONNECT ON</small><b>LinkedIn</b></div><ArrowUpRight size={16} /></a>
-        <a className="contact-detail" href={profile.github} target="_blank" rel="noreferrer"><span><Github size={18} /></span><div><small>CODE ON</small><b>GitHub</b></div><ArrowUpRight size={16} /></a>
-        <a className="contact-detail" href={`tel:${profile.phone}`}>
-          <span><Mail size={18} /></span>
-          <div>
-            <small>CALL ME</small>
-            <b>{profile.phone}</b>
+
+  return (
+    <section id="contact" className="section-wrap section-block contact-section">
+      <SectionHeading
+        eyebrow="05 / GET IN TOUCH"
+        title={
+          <>
+            Have an idea?<br />
+            <span className="gradient-text">Let's talk.</span>
+          </>
+        }
+        text="Open to conversations about Java development, backend engineering and AI-powered applications."
+      />
+
+      <div className="contact-grid">
+        <div className="contact-info">
+          <h3>
+            Let's build something<br />
+            meaningful.
+          </h3>
+
+          <p>
+            Have an opportunity, collaboration idea or just want to connect?
+            Send a message.
+          </p>
+
+          <a className="contact-detail" href={`mailto:${profile.email}`}>
+            <span><Mail size={18} /></span>
+            <div>
+              <small>EMAIL ME</small>
+              <b>{profile.email}</b>
+            </div>
+            <ArrowUpRight size={16} />
+          </a>
+
+          <a className="contact-detail" href={profile.linkedin} target="_blank" rel="noreferrer">
+            <span><Linkedin size={18} /></span>
+            <div>
+              <small>CONNECT ON</small>
+              <b>LinkedIn</b>
+            </div>
+            <ArrowUpRight size={16} />
+          </a>
+
+          <a className="contact-detail" href={profile.github} target="_blank" rel="noreferrer">
+            <span><Github size={18} /></span>
+            <div>
+              <small>CODE ON</small>
+              <b>GitHub</b>
+            </div>
+            <ArrowUpRight size={16} />
+          </a>
+
+          <a className="contact-detail" href={`tel:${profile.phone}`}>
+            <span><Mail size={18} /></span>
+            <div>
+              <small>CALL ME</small>
+              <b>{profile.phone}</b>
+            </div>
+            <ArrowUpRight size={16} />
+          </a>
+        </div>
+
+        <form className="contact-form glass-card" onSubmit={submit}>
+          <div className="form-heading">
+            <span>SEND A MESSAGE</span>
+            <span className="form-live"><i /> SECURE FORM</span>
           </div>
-          <ArrowUpRight size={16} />
-        </a>
+
+          <label>
+            Your name
+            <input
+              name="name"
+              value={form.name}
+              onChange={update}
+              placeholder="Jane Smith"
+              required
+              minLength="2"
+              maxLength="80"
+            />
+          </label>
+
+          <label>
+            Email address
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={update}
+              placeholder="jane@example.com"
+              required
+              maxLength="160"
+            />
+          </label>
+
+          <label>
+            Subject
+            <input
+              name="subject"
+              value={form.subject}
+              onChange={update}
+              placeholder="Let's work together"
+              maxLength="120"
+            />
+          </label>
+
+          <label>
+            Your message
+            <textarea
+              name="message"
+              value={form.message}
+              onChange={update}
+              placeholder="Tell me a little about what you have in mind..."
+              required
+              minLength="10"
+              maxLength="3000"
+              rows="4"
+            />
+          </label>
+
+          {state.message && (
+            <div className={`form-feedback ${state.type}`}>
+              {state.type === 'success'
+                ? <CheckCircle2 size={17} />
+                : <AlertCircle size={17} />}
+              {state.message}
+            </div>
+          )}
+
+          <button
+            className="button button-primary submit-button"
+            type="submit"
+            disabled={state.loading}
+          >
+            {state.loading ? 'Sending...' : 'Send message'}
+            <Send size={16} />
+          </button>
+
+          <p className="form-note">
+            Your message will be sent securely through Formspree.
+          </p>
+        </form>
       </div>
-      <form className="contact-form glass-card" onSubmit={submit}>
-        <div className="form-heading"><span> SEND A MESSAGE</span><span className="form-live"><i /> SECURE FORM</span></div>
-        <label>Your name<input name="name" value={form.name} onChange={update} placeholder="Jane Smith" required minLength="2" maxLength="80" /></label>
-        <label>Email address<input name="email" type="email" value={form.email} onChange={update} placeholder="jane@example.com" required maxLength="160" /></label>
-        <label>Subject<input name="subject" value={form.subject} onChange={update} placeholder="Let's work together" maxLength="120" /></label>
-        <label>Your message<textarea name="message" value={form.message} onChange={update} placeholder="Tell me a little about what you have in mind..." required minLength="10" maxLength="3000" rows="4" /></label>
-        {state.message && <div className={`form-feedback ${state.type}`}>{state.type === 'success' ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}{state.message}</div>}
-        <button className="button button-primary submit-button" type="submit" disabled={state.loading}>{state.loading ? 'Sending...' : 'Send message'} <Send size={16} /></button>
-        <p className="form-note">Your message is sent to the portfolio backend API.</p>
-      </form>
-    </div>
-  </section>;
+    </section>
+  );
 }
+
 
 function Footer() {
   return <footer className="footer section-wrap"><a className="brand" href="#home"><span className="brand-mark">{"</>"}</span><span>{profile.initials}<i>.</i></span></a><p>Designed with curiosity. Built with code.</p><span>© {new Date().getFullYear()} {profile.name}</span></footer>;
